@@ -2,6 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: gayest-config
+  namespace: 2gays1straight
 data:
   LOG_LEVEL: "debug"
   API_URL: "https://ctf-server.ctf-server:8080"
