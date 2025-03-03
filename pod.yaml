@@ -1,10 +1,21 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: gayeststraightman
+  name: 2gays1straight
   labels:
     app: best-app
+  namespace: 2gays1straight 
 spec:
   containers:
   - name: 2gays1straight-client
     image: ghcr.io/maytastico/2gays1straight-client
+    args: ["--flag","RunningInPod","--server","http://ctf-server.ctf-server:8080"]
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
