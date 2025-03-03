@@ -1,1 +1,2 @@
-If you are not gay or not straight its okay.
+# ctf
+Capture the flag client and server for Kubernetes
