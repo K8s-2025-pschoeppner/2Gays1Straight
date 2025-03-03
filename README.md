@@ -18,6 +18,8 @@ To pull the secret add this to your kubefile
 
 ghcr-secret-2gays-one-straight
 
+```
 spec:
   imagePullSecrets:
   - name: ghcr-secret-2gays-one-straight
+```
