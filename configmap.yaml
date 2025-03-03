@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: ctf-configmap
   namespace: 2gays1straight
-data: {config:foo}
+data: {"config":"foo"}
