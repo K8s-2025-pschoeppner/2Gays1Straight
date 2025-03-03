@@ -7,8 +7,8 @@ RUN go mod download
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux go build -v -o client ./cmd/client
 
-FROM scratch
+FROM gcr.io/distroless/base-debian11
 
 COPY --from=builder /usr/src/app/client /client
 
-ENTRYPOINT ["/client"]
+ENTRYPOINT [ "/client" ]
