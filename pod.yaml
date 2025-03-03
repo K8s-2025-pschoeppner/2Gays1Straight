@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: gayeststraightman
+  labels:
+    app: best-app
+spec:
+  containers:
+  - name: 2gays1straight-client
+    image: ghcr.io/maytastico/2gays1straight-client
