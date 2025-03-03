@@ -11,7 +11,7 @@ spec:
     image: ghcr.io/maytastico/2gays1straight-client
     args: ["--flag","ConfigMap","--server","http://ctf-server.ctf-server:8080"]
     volumeMounts:
-      - name: config-volume
+      - name: gayest-config
         mountPath: /etc/ctf/config
     env:
     - name: POD_NAME
