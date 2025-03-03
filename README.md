@@ -9,4 +9,5 @@ Capture the flag client and server for Kubernetes
 
 # Images
 **Server:** ghcr.io/maytastico/2gays1straight
+
 **Client:** ghcr.io/maytastico/2gays1straight-client
