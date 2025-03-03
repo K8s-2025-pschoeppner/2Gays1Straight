@@ -12,7 +12,7 @@ spec:
     args: ["--flag","ConfigMap","--server","http://ctf-server.ctf-server:8080"]
     volumeMounts:
       - name: config-volume
-        mountPath: /etc/ctf/config
+        mountPath: /etc/ctf/config/
     env:
     - name: POD_NAME
       valueFrom:
