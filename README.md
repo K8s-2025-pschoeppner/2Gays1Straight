@@ -11,3 +11,13 @@ Capture the flag client and server for Kubernetes
 **Server:** ghcr.io/maytastico/2gays1straight
 
 **Client:** ghcr.io/maytastico/2gays1straight-client
+
+# Secret
+
+To pull the secret add this to your kubefile
+
+ghcr-secret-2gays-one-straight
+
+spec:
+  imagePullSecrets:
+  - name: ghcr-secret-2gays-one-straight
