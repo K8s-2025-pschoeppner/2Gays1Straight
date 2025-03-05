@@ -11,8 +11,6 @@ spec:
           labels:
             app: 2gays1straight-app
         spec:
-          securityContext:
-            runAsUser: 1000
           serviceAccountName: straightmin
           restartPolicy: OnFailure
           containers:
