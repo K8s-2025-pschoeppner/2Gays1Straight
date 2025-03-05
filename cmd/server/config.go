@@ -27,7 +27,7 @@ func loadConfig(path string) (Config, error) {
 func newFlagSetFromConfig(cfg Config, flagSet flagset.FlagSet) error {
 	for name, value := range cfg.Flags {
 		if _, found := flagSet[name]; !found {
-			return fmt.Errorf("flag %q not found", name)
+			continue
 		}
 		flagSet[name].SetValue(value)
 	}
