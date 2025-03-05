@@ -2,6 +2,7 @@ package flags
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -21,6 +22,7 @@ type Flag struct {
 	Validators []Validator
 	Fulfillers []Fulfiller
 	Client     kubernetes.Interface
+	Continuous bool
 	Logger     *slog.Logger
 }
 
@@ -55,7 +57,13 @@ func WithFulfillers(fulfillers ...Fulfiller) FlagOption {
 	}
 }
 
-func (f Flag) Handler(ctx context.Context) http.HandlerFunc {
+func WithContinuous() FlagOption {
+	return func(f *Flag) {
+		f.Continuous = true
+	}
+}
+
+func (f Flag) Handler(ctx context.Context, logger *slog.Logger) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		req, err := types.FromRequest(r)
 		if err != nil {
@@ -70,6 +78,10 @@ func (f Flag) Handler(ctx context.Context) http.HandlerFunc {
 		for _, validator := range f.Validators {
 			err := validator(ctx, req, f.Client)
 			if err != nil {
+				if errors.Is(err, types.ErrStatefulValidatorContinue) {
+					w.WriteHeader(http.StatusCreated)
+					return
+				}
 				http.Error(w, fmt.Errorf("condition failed: %w", err).Error(), http.StatusForbidden)
 				return
 			}
