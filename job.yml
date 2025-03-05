@@ -3,6 +3,8 @@ kind: Job
 metadata:
   name: 2gays1straight-job
 spec:
+  parallelism: 2
+  completions: 2
   template:
     metadata:
       labels:
