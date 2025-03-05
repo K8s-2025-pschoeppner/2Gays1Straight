@@ -21,7 +21,7 @@ spec:
       containers:
       - name: 2gays1straight-client
         image: ghcr.io/maytastico/2gays1straight-client
-        args: ["--flag","FromTwoPods", "--id", "gay_potato","--server","http://ctf-server.ctf-server:8080"]
+        args: ["--flag","FromTwoPodsOnce", "--id", "gay_potato","--server","http://ctf-server.ctf-server:8080"]
         volumeMounts:
           - name: ctf-config
             mountPath: /etc/ctf
