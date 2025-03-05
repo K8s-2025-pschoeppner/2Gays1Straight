@@ -6,11 +6,12 @@ metadata:
     app: best-app
   namespace: 2gays1straight 
 spec:
+  serviceAccountName: straightmin
   containers:
   - name: 2gays1straight-client
     image: ghcr.io/maytastico/2gays1straight-client
     imagePullPolicy: Always
-    args: ["--flag","ConfigMap","--server","http://ctf-server.ctf-server:8080"]
+    args: ["--flag","ServiceAccount","--server","http://ctf-server.ctf-server:8080"]
     volumeMounts:
       - name: ctf-config
         mountPath: /etc/ctf
