@@ -57,17 +57,15 @@ func NewFlagSet(client kubernetes.Interface, logger *slog.Logger) FlagSet {
 			flags.WithContinuous()),
 		"FromTwoPodsOnce": flags.NewFlag("FromTwoPodsOnce", client, logger,
 			flags.WithValidators(
-			// TODO
-			),
-			flags.WithContinuous()),
+				conditions.WithStatefulConditions(flags.NewStore(), conditions.WithDifferenPodOnce(2)),
+			)),
 		"FromOnePodTwice": flags.NewFlag("FromOnePodTwice", client, logger,
 			flags.WithValidators(
-			// TODO
-			),
-			flags.WithContinuous()),
+				conditions.WithStatefulConditions(flags.NewStore(), conditions.WithOnePodTwice()),
+			)),
 		"FromEveryNode": flags.NewFlag("FromEveryNode", client, logger,
 			flags.WithValidators(
-			// TODO
+				conditions.WithStatefulConditions(flags.NewStore(), conditions.WithEveryNode()),
 			),
 			flags.WithContinuous()),
 	}
