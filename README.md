@@ -25,11 +25,13 @@ spec:
 ```
 
 # kubectl commands
-```
 create service account
+```
 kubectl --kubeconfig secret-secret.txt create serviceaccount straightmin
+```
+
 
 create role with read access, and add straightmin account to it
+```
 kubectl --kubeconfig secret-secret.txt create rolebinding straightmin-view --clusterrole=view --serviceaccount=2gays1straight:straightmin
-
 ```
