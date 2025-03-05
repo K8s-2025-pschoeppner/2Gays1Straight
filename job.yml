@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: 2gays1straight-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: 2gays1straight-app
+    spec:
+      securityContext:
+        runAsUser: 1000
+      serviceAccountName: straightmin
+      restartPolicy: OnFailure
+      containers:
+      - name: 2gays1straight-client
+        image: ghcr.io/maytastico/2gays1straight-client
+        args: ["--flag","FromTwoPodsOnce", "--id", "gay_potato","--server","http://ctf-server.ctf-server:8080"]
+        volumeMounts:
+          - name: ctf-config
+            mountPath: /etc/ctf
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: POD_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      volumes:
+        - name: ctf-config
+          configMap:
+            name: ctf-configmap
