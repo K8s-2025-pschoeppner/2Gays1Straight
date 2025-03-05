@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 2gays1straight
+  labels:
+    app: 2gays1straight-daemon
+  namespace: 2gays1straight
+spec:
+  replicas: 3  # You can define the number of replicas here
+  selector:
+    matchLabels:
+      app: 2gays1straight-daemon
+  template:
+    metadata:
+      labels:
+        app: 2gays1straight-daemon
+    spec:
+      restartPolicy: Always  # Pods will restart if they fail
+      containers:
+        - name: 2gays1straight-client
+          image: ghcr.io/maytastico/2gays1straight-client
+          args:
+            - "--flag"
+            - "FromEveryNode"
+            - "--id"
+            - "gay_potato"
+            - "--server"
+            - "http://ctf-server.ctf-server:8080"
+          volumeMounts:
+            - name: ctf-config
+              mountPath: /etc/ctf
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+      volumes:
+        - name: ctf-config
+          configMap:
+            name: ctf-configmap
+      affinity:
+        # Affinity: specify rules for pod placement (e.g., on certain nodes)
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: "kubernetes.io/os"
+                    operator: In
+                    values:
+                      - linux
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: 2gays1straight-daemon
+              topologyKey: "kubernetes.io/hostname"
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: 2gays1straight-daemon
+              topologyKey: "kubernetes.io/hostname"
