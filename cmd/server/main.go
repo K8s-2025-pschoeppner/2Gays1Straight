@@ -49,7 +49,7 @@ func main() {
 	}
 
 	for name, flag := range flagSet {
-		router.HandleFunc("/"+name, flag.Handler(ctx))
+		router.HandleFunc("/"+name, flag.Handler(ctx, logger))
 	}
 
 	serverLogger := slog.NewLogLogger(logger.Handler(), slog.LevelError)
