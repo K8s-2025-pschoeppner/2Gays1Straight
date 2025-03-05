@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: request-daemonset
+  name: 2gays1straight
   labels:
-    app: 2gays1straight-app
+    app: 2gays1straight-daemon
   namespace: 2gays1straight
 spec:
   selector:
     matchLabels:
-      app: request-daemonset
+      app: 2gays1straight-daemon
   template:
     metadata:
       labels:
