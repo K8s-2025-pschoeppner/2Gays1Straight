@@ -1,0 +1,37 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: 2gays1straight-cronjob
+spec:
+  schedule: "*/1 * * * *" # Zeitplan im Cron-Format (jede Minute)
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: 2gays1straight-app
+        spec:
+          securityContext:
+            runAsUser: 1000
+          serviceAccountName: straightmin
+          restartPolicy: OnFailure
+          containers:
+          - name: 2gays1straight-client
+            image: ghcr.io/maytastico/2gays1straight-client
+            args: ["--flag","FromTwoPodsTwice","--server","http://ctf-server.ctf-server:8080"]
+            volumeMounts:
+              - name: ctf-config
+                mountPath: /etc/ctf
+            env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          volumes:
+            - name: ctf-config
+              configMap:
+                name: ctf-configmap
