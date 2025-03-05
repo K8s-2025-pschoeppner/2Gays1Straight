@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/k8s-2025-pschoeppner/ctf/pkg/flagset"
@@ -24,6 +25,7 @@ const (
 var (
 	flagName = flag.String("flag", "", "The name of the flag to capture")
 	server   = flag.String("server", "http://ctf-server:8080", "The server to capture the flag on")
+	id       = flag.String("id", "", "The id of the client")
 )
 
 func getEnvVar(name string) (string, error) {
@@ -73,7 +75,14 @@ func main() {
 
 	ctx := context.Background()
 
-	clientID := uuid.New().String()
+	clientID := *id
+	if clientID == "" {
+		clientID = uuid.New().String()
+		logger.Warn("--id not set. Generated ID", slog.String("id", clientID))
+	}
+
+	logger.Info("client id", slog.String("id", clientID))
+
 	req := types.Request{
 		ID:           clientID,
 		PodName:      podName,
@@ -81,37 +90,47 @@ func main() {
 		Args:         make(map[string]string),
 	}
 
-	for _, fulfiller := range flag.Fulfillers {
-		err = fulfiller(ctx, req, client)
+	for i := 0; i < 2 || flag.Continuous; i++ {
+		logger.Info("starting to capture flag", slog.String("flag", *flagName))
+		for _, fulfiller := range flag.Fulfillers {
+			err = fulfiller(ctx, req, client)
+			if err != nil {
+				logger.Error("fulfilling condition", slog.String("flag", *flagName), slog.String("err", err.Error()))
+				os.Exit(1)
+			}
+		}
+
+		body, err := req.ToJSON()
 		if err != nil {
-			logger.Error("fulfilling condition", slog.String("flag", *flagName), slog.String("err", err.Error()))
+			logger.Error("marshalling request", slog.String("flag", *flagName), slog.String("err", err.Error()))
 			os.Exit(1)
 		}
-	}
 
-	body, err := req.ToJSON()
-	if err != nil {
-		logger.Error("marshalling request", slog.String("flag", *flagName), slog.String("err", err.Error()))
-		os.Exit(1)
-	}
+		resp, err := http.Post(fmt.Sprintf("%s/%s", *server, *flagName), "application/json", bytes.NewReader(body))
+		if err != nil {
+			logger.Error("sending request", slog.String("flag", *flagName), slog.String("err", err.Error()))
+			os.Exit(1)
+		}
+		defer resp.Body.Close()
 
-	resp, err := http.Post(fmt.Sprintf("%s/%s", *server, *flagName), "application/json", bytes.NewReader(body))
-	if err != nil {
-		logger.Error("sending request", slog.String("flag", *flagName), slog.String("err", err.Error()))
-		os.Exit(1)
-	}
-	defer resp.Body.Close()
+		if resp.StatusCode == http.StatusCreated {
+			logger.Info("flag not yet captured, but you seem to be on the correct path", slog.String("flag", *flagName))
+			time.Sleep(5 * time.Second)
+			continue
+		}
 
-	flagValue, err := io.ReadAll(resp.Body)
-	if err != nil {
-		logger.Error("reading response", slog.String("flag", *flagName), slog.String("err", err.Error()))
-		os.Exit(1)
-	}
+		flagValue, err := io.ReadAll(resp.Body)
+		if err != nil {
+			logger.Error("reading response", slog.String("flag", *flagName), slog.String("err", err.Error()))
+			os.Exit(1)
+		}
 
-	if resp.StatusCode != http.StatusOK {
-		logger.Error("flag capture failed", slog.String("flag", *flagName), slog.String("status", resp.Status), slog.String("body", string(flagValue)))
-		os.Exit(1)
-	}
+		if resp.StatusCode != http.StatusOK {
+			logger.Error("flag capture failed", slog.String("flag", *flagName), slog.String("status", resp.Status), slog.String("body", string(flagValue)))
+			os.Exit(1)
+		}
 
-	logger.Info("flag captured 🎉🎉🎉", slog.String("flag", *flagName), slog.String("value", string(flagValue)))
+		logger.Info("flag captured 🎉🎉🎉", slog.String("flag", *flagName), slog.String("value", string(flagValue)))
+		break
+	}
 }
