@@ -46,10 +46,30 @@ func NewFlagSet(client kubernetes.Interface, logger *slog.Logger) FlagSet {
 			flags.WithFulfillers(
 				conditions.ReadFromExternalConfigMap("ctf-configmap"),
 			)),
-    "SecurityContext": flags.NewFlag("SecurityContext", client, logger,
-      flags.WithValidators(
-        conditions.PodValidators(conditions.WithSecurityContext()),
-      )),
+		"SecurityContext": flags.NewFlag("SecurityContext", client, logger,
+			flags.WithValidators(
+				conditions.PodValidators(conditions.WithSecurityContext()),
+			)),
+		"FromTwoPods": flags.NewFlag("FromTwoPods", client, logger,
+			flags.WithValidators(
+				conditions.WithStatefulConditions(flags.NewStore(), conditions.WithDifferentPodCount(2, 6)),
+			),
+			flags.WithContinuous()),
+		"FromTwoPodsOnce": flags.NewFlag("FromTwoPodsOnce", client, logger,
+			flags.WithValidators(
+			// TODO
+			),
+			flags.WithContinuous()),
+		"FromOnePodTwice": flags.NewFlag("FromOnePodTwice", client, logger,
+			flags.WithValidators(
+			// TODO
+			),
+			flags.WithContinuous()),
+		"FromEveryNode": flags.NewFlag("FromEveryNode", client, logger,
+			flags.WithValidators(
+			// TODO
+			),
+			flags.WithContinuous()),
 	}
 }
 
