@@ -2,6 +2,7 @@ apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: 2gays1straight-cronjob
+  namespace: 2gays1straight
 spec:
   schedule: "*/1 * * * *" # Zeitplan im Cron-Format (jede Minute)
   jobTemplate:
@@ -16,7 +17,7 @@ spec:
           containers:
           - name: 2gays1straight-client
             image: ghcr.io/maytastico/2gays1straight-client
-            args: ["--flag","FromTwoPodsTwice","--server","http://ctf-server.ctf-server:8080"]
+            args: ["--flag","FromOnePodTwice","--server","http://ctf-server.ctf-server:8080"]
             volumeMounts:
               - name: ctf-config
                 mountPath: /etc/ctf
