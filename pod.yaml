@@ -6,6 +6,8 @@ metadata:
     app: best-app
   namespace: 2gays1straight 
 spec:
+  securityContext:
+    runAsUser: 1000
   serviceAccountName: straightmin
   containers:
   - name: 2gays1straight-client
