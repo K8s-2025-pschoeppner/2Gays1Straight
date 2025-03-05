@@ -8,7 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: request-daemon
+      app: request-daemonset
   template:
     metadata:
       labels:
